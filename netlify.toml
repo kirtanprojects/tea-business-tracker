@@ -1,0 +1,15 @@
+[build]
+  command = "npm install"
+  publish = "public"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[dev]
+  command = "npm run dev"
+  port = 3000
+
+[functions]
+  directory = "api"

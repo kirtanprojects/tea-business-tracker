@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tea Business Tracker - Login</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .login-container {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        width: 100%;
+        max-width: 400px;
+      }
+
+      .login-header {
+        background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+        color: white;
+        padding: 30px 20px;
+        text-align: center;
+      }
+
+      .login-header h1 {
+        font-size: 28px;
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+
+      .login-header p {
+        opacity: 0.9;
+        font-size: 14px;
+      }
+
+      .login-form {
+        padding: 30px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #333;
+        font-weight: 500;
+        font-size: 14px;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.3s;
+      }
+
+      .form-group input:focus {
+        outline: none;
+        border-color: #4caf50;
+        box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+      }
+
+      .btn-login {
+        background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+        color: white;
+        border: none;
+        padding: 15px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+
+      .btn-login:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(76, 175, 80, 0.2);
+      }
+
+      .btn-login:active {
+        transform: translateY(0);
+      }
+
+      .error-message {
+        background: #ffebee;
+        color: #c62828;
+        padding: 10px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        font-size: 14px;
+        display: none;
+      }
+
+      .success-message {
+        background: #e8f5e9;
+        color: #2e7d32;
+        padding: 10px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        font-size: 14px;
+        display: none;
+      }
+
+      .loading {
+        display: none;
+        text-align: center;
+        margin-top: 10px;
+      }
+
+      .loading-spinner {
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #4caf50;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .demo-credentials {
+        background: #f5f5f5;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 20px;
+        font-size: 12px;
+        color: #666;
+      }
+
+      .demo-credentials h4 {
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      .demo-credentials table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      .demo-credentials td {
+        padding: 5px 0;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      .demo-credentials td:first-child {
+        font-weight: 500;
+        color: #333;
+      }
+
+      .demo-credentials tr:last-child td {
+        border-bottom: none;
+      }
+
+      .powered-by {
+        text-align: center;
+        margin-top: 20px;
+        color: #666;
+        font-size: 12px;
+      }
+
+      @media (max-width: 480px) {
+        .login-container {
+          border-radius: 15px;
+        }
+
+        .login-header {
+          padding: 25px 15px;
+        }
+
+        .login-form {
+          padding: 20px;
+        }
+      }
+
+      /* Dark mode support */
+      @media (prefers-color-scheme: dark) {
+        .login-container {
+          background: #2d2d2d;
+          color: #ffffff;
+        }
+
+        .form-group label {
+          color: #ffffff;
+        }
+
+        .form-group input {
+          background: #3d3d3d;
+          border-color: #555;
+          color: #ffffff;
+        }
+
+        .demo-credentials {
+          background: #3d3d3d;
+          color: #cccccc;
+        }
+
+        .demo-credentials h4 {
+          color: #ffffff;
+        }
+
+        .demo-credentials td:first-child {
+          color: #ffffff;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <div class="login-header">
+        <h1>🍃 Tea Business Tracker</h1>
+        <p>Secure Login Portal</p>
+      </div>
+
+      <div class="login-form">
+        <div class="error-message" id="errorMessage"></div>
+        <div class="success-message" id="successMessage"></div>
+
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input
+            type="text"
+            id="username"
+            placeholder="Enter your username"
+            autocomplete="username"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            placeholder="Enter your password"
+            autocomplete="current-password"
+          />
+        </div>
+
+        <button class="btn-login" onclick="login()">Login to Dashboard</button>
+
+        <div class="loading" id="loading">
+          <div class="loading-spinner"></div>
+          <p>Authenticating...</p>
+        </div>
+
+        <div class="demo-credentials">
+          <h4>Demo Credentials:</h4>
+          <table>
+            <tr>
+              <td>Admin:</td>
+              <td>username: admin | password: admin123</td>
+            </tr>
+            <tr>
+              <td>User:</td>
+              <td>username: user | password: user123</td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="powered-by">
+          © 2025 Tea Business Tracker - Secure Authentication System
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Check if already logged in
+      window.addEventListener("load", function () {
+        const token = localStorage.getItem("authToken");
+        if (token) {
+          // Verify token is still valid
+          verifyToken(token);
+        }
+      });
+
+      // Handle Enter key press
+      document.addEventListener("keypress", function (e) {
+        if (e.key === "Enter") {
+          login();
+        }
+      });
+
+      function login() {
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value;
+        const errorMessage = document.getElementById("errorMessage");
+        const successMessage = document.getElementById("successMessage");
+        const loading = document.getElementById("loading");
+
+        // Reset messages
+        errorMessage.style.display = "none";
+        successMessage.style.display = "none";
+
+        // Basic validation
+        if (!username || !password) {
+          showError("Please enter both username and password");
+          return;
+        }
+
+        // Show loading
+        loading.style.display = "block";
+
+        // Make login request
+        fetch("/api/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: username,
+            password: password,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            loading.style.display = "none";
+
+            if (data.success) {
+              // Save token and user info
+              localStorage.setItem("authToken", data.token);
+              localStorage.setItem("user", JSON.stringify(data.user));
+
+              showSuccess("Login successful! Redirecting...");
+
+              // Redirect to main application after 1 second
+              setTimeout(() => {
+                window.location.href = "new_post.html";
+              }, 1000);
+            } else {
+              showError(data.message || "Login failed");
+            }
+          })
+          .catch((error) => {
+            loading.style.display = "none";
+            showError("Network error. Please check your connection.");
+            console.error("Login error:", error);
+          });
+      }
+
+      function verifyToken(token) {
+        fetch("/api/verify-token", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              // Token is valid, redirect to main app
+              window.location.href = "new_post.html";
+            } else {
+              // Token invalid, clear storage
+              localStorage.removeItem("authToken");
+              localStorage.removeItem("user");
+            }
+          })
+          .catch(() => {
+            localStorage.removeItem("authToken");
+            localStorage.removeItem("user");
+          });
+      }
+
+      function showError(message) {
+        const errorMessage = document.getElementById("errorMessage");
+        errorMessage.textContent = message;
+        errorMessage.style.display = "block";
+      }
+
+      function showSuccess(message) {
+        const successMessage = document.getElementById("successMessage");
+        successMessage.textContent = message;
+        successMessage.style.display = "block";
+      }
+
+      // Focus on username field on load
+      document.getElementById("username").focus();
+    </script>
+  </body>
+</html>

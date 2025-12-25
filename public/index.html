@@ -1,0 +1,2365 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Tea Business Tracker</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont,
+          sans-serif;
+        background-color: #f5f7fa;
+        margin: 0;
+        padding: 15px;
+        min-height: 100vh;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .container {
+        max-width: 800px;
+        width: 100%;
+        background: white;
+        padding: 20px;
+        margin: 0 auto;
+        border-radius: 16px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        position: relative;
+      }
+
+      /* Header with user info */
+      .header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+
+      .header-left h1 {
+        margin: 0;
+        color: #333;
+        font-size: clamp(1.5rem, 4vw, 2rem);
+      }
+
+      .header-left .welcome-text {
+        color: #666;
+        font-size: 0.9rem;
+        margin-top: 5px;
+      }
+
+      .header-right {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .user-info {
+        background: #f0f8ff;
+        padding: 8px 15px;
+        border-radius: 20px;
+        border: 1px solid #0078d7;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 500;
+      }
+
+      .user-info .role-badge {
+        background: #0078d7;
+        color: white;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+
+      .user-info .role-badge.admin {
+        background: #6f42c1;
+      }
+
+      .user-info .role-badge.user {
+        background: #28a745;
+      }
+
+      .btn-logout {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background-color 0.3s;
+      }
+
+      .btn-logout:hover {
+        background: #c82333;
+      }
+
+      .admin-btn {
+        background: #6f42c1;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background-color 0.3s;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .admin-btn:hover {
+        background: #5a32a3;
+      }
+
+      label {
+        display: block;
+        margin-top: 15px;
+        font-weight: 600;
+        color: #444;
+        font-size: clamp(0.9rem, 2vw, 1rem);
+      }
+
+      input,
+      select,
+      button {
+        width: 100%;
+        padding: 14px 12px;
+        margin-top: 8px;
+        border-radius: 10px;
+        border: 2px solid #ddd;
+        font-size: clamp(0.95rem, 2.5vw, 1rem);
+        box-sizing: border-box;
+        transition: all 0.3s;
+        -webkit-appearance: none;
+        appearance: none;
+      }
+
+      input:focus,
+      select:focus {
+        outline: none;
+        border-color: #0078d7;
+        box-shadow: 0 0 0 3px rgba(0, 120, 215, 0.1);
+      }
+
+      button {
+        background-color: #0078d7;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 20px;
+        transition: background-color 0.3s, transform 0.1s;
+        border: none;
+        font-size: clamp(1rem, 2.5vw, 1.1rem);
+        padding: 16px;
+        border-radius: 12px;
+      }
+
+      button:hover,
+      button:active {
+        background-color: #005fa3;
+        transform: translateY(-2px);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      .footer {
+        text-align: center;
+        margin-top: 30px;
+        font-size: 0.85em;
+        color: #777;
+        padding: 10px;
+      }
+
+      .history-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        overflow-x: auto;
+        display: block;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .history-table th,
+      .history-table td {
+        border: 1px solid #ccc;
+        padding: 12px 8px;
+        text-align: center;
+        font-size: clamp(0.8rem, 2vw, 0.9rem);
+        white-space: nowrap;
+      }
+
+      .history-table th {
+        background-color: #0078d7;
+        color: white;
+        position: sticky;
+        top: 0;
+      }
+
+      tr:nth-child(even) {
+        background-color: #f8f9fa;
+      }
+
+      .btn-secondary {
+        background-color: #28a745;
+      }
+
+      .btn-secondary:hover {
+        background-color: #218838;
+      }
+
+      .calculation-box {
+        background: #f0f8f0;
+        padding: 12px;
+        border-radius: 8px;
+        margin: 12px 0;
+        border-left: 4px solid #28a745;
+        font-size: clamp(0.9rem, 2vw, 1rem);
+      }
+
+      .calculation-text {
+        color: #2d5016;
+        text-align: center;
+        font-weight: 500;
+      }
+
+      .radio-group {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      /* Improved radio option styles */
+      .radio-option {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 20px 16px;
+        border: 2px solid #ddd;
+        border-radius: 12px;
+        background: white;
+        cursor: pointer;
+        flex: 1;
+        min-width: 140px;
+        transition: all 0.3s;
+        position: relative;
+        user-select: none;
+      }
+
+      .radio-option:hover {
+        background: #f0f8ff;
+        border-color: #0078d7;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 120, 215, 0.15);
+      }
+
+      .radio-option.selected {
+        background: #e8f4fd;
+        border-color: #0078d7;
+        border-width: 3px;
+        box-shadow: 0 4px 15px rgba(0, 120, 215, 0.2);
+      }
+
+      .radio-option.buy-option.selected {
+        background: #d4edda;
+        border-color: #28a745;
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2);
+      }
+
+      .radio-option.sell-option.selected {
+        background: #f8d7da;
+        border-color: #dc3545;
+        box-shadow: 0 4px 15px rgba(220, 53, 69, 0.2);
+      }
+
+      .radio-option input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+        margin: 0;
+      }
+
+      .radio-option label {
+        margin: 0;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: clamp(1rem, 2.5vw, 1.1rem);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        pointer-events: none;
+      }
+
+      .radio-icon {
+        font-size: 1.3em;
+      }
+
+      .section {
+        display: none;
+        padding: 20px;
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
+        background: #fafafa;
+        margin-top: 20px;
+      }
+
+      .section-title {
+        font-size: clamp(1.1rem, 3vw, 1.3rem);
+        font-weight: 700;
+        color: #0078d7;
+        margin-bottom: 20px;
+        border-bottom: 3px solid #0078d7;
+        padding-bottom: 10px;
+        text-align: center;
+      }
+
+      .section.buy-section .section-title {
+        color: #28a745;
+        border-bottom-color: #28a745;
+      }
+
+      .section.sell-section .section-title {
+        color: #dc3545;
+        border-bottom-color: #dc3545;
+      }
+
+      .btn-buy {
+        background-color: #28a745;
+        font-size: clamp(1rem, 2.5vw, 1.1rem);
+        padding: 16px;
+      }
+
+      .btn-buy:hover {
+        background-color: #218838;
+      }
+
+      .btn-sell {
+        background-color: #dc3545;
+        font-size: clamp(1rem, 2.5vw, 1.1rem);
+        padding: 16px;
+      }
+
+      .btn-sell:hover {
+        background-color: #c82333;
+      }
+
+      .form-row {
+        display: flex;
+        gap: 12px;
+        margin: 15px 0;
+        flex-wrap: wrap;
+      }
+
+      .form-group {
+        flex: 1;
+        min-width: 150px;
+      }
+
+      /* Stock Info Banner */
+      .stock-banner {
+        background: linear-gradient(135deg, #4caf50, #2e7d32);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 15px rgba(46, 125, 50, 0.2);
+      }
+
+      .stock-banner-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .stock-banner-icon {
+        font-size: 2rem;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 10px;
+        border-radius: 50%;
+      }
+
+      .stock-banner-text h3 {
+        margin: 0 0 5px 0;
+        font-size: 1.1rem;
+      }
+
+      .stock-banner-text p {
+        margin: 0;
+        font-size: 0.9rem;
+        opacity: 0.9;
+      }
+
+      .stock-banner-value {
+        font-size: 2rem;
+        font-weight: 800;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .stock-info {
+        background: linear-gradient(135deg, #e8f4fd, #d4e9ff);
+        padding: 18px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        border: 2px solid #0078d7;
+      }
+
+      .stock-title {
+        font-weight: 700;
+        color: #0078d7;
+        margin-bottom: 15px;
+        text-align: center;
+        font-size: clamp(1rem, 3vw, 1.2rem);
+      }
+
+      .stock-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 15px;
+        text-align: center;
+      }
+
+      .stock-item:only-child,
+      .stock-item:nth-child(3):nth-last-child(1) {
+        grid-column: 1 / -1;
+        margin: 0 auto;
+        max-width: 250px;
+      }
+
+      .stock-item {
+        padding: 12px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+      }
+
+      .stock-value {
+        font-size: clamp(1.1rem, 3vw, 1.4rem);
+        font-weight: 800;
+        color: #333;
+        margin-bottom: 5px;
+      }
+
+      .stock-label {
+        font-size: clamp(0.75rem, 2vw, 0.85rem);
+        color: #666;
+        font-weight: 500;
+      }
+
+      .price-display {
+        background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+        padding: 16px;
+        border-radius: 12px;
+        margin: 20px 0;
+        border: 3px solid #ffc107;
+        text-align: center;
+        font-weight: 700;
+        font-size: clamp(1.1rem, 3vw, 1.3rem);
+        color: #856404;
+        box-shadow: 0 4px 15px rgba(255, 193, 7, 0.2);
+      }
+
+      /* Weight input with stock info */
+      .weight-input-container {
+        position: relative;
+        margin-top: 8px;
+      }
+
+      .weight-stock-info {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #4caf50;
+        color: white;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        pointer-events: none;
+      }
+
+      input#sellWeight {
+        padding-right: 100px;
+      }
+
+      /* Auth required overlay */
+      .auth-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        padding: 20px;
+      }
+
+      .auth-box {
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        text-align: center;
+        max-width: 400px;
+        width: 100%;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      }
+
+      .auth-box h2 {
+        color: #333;
+        margin-bottom: 20px;
+      }
+
+      .auth-box p {
+        color: #666;
+        margin-bottom: 30px;
+      }
+
+      .auth-box .loading-spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #0078d7;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* Permission denied message */
+      .permission-denied {
+        background: linear-gradient(135deg, #ffe6e6, #ffcccc);
+        padding: 15px;
+        border-radius: 10px;
+        margin: 15px 0;
+        border: 2px solid #dc3545;
+        text-align: center;
+        color: #721c24;
+        font-weight: 500;
+      }
+
+      .permission-denied .admin-only {
+        font-weight: bold;
+        color: #c82333;
+      }
+
+      /* Enhanced User Stats */
+      .user-stats {
+        background: linear-gradient(135deg, #e6f7ff, #d1ecf1);
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        border: 2px solid #17a2b8;
+        display: none;
+      }
+
+      .user-stats-title {
+        font-weight: 700;
+        color: #0c5460;
+        margin-bottom: 15px;
+        text-align: center;
+        font-size: 1.1rem;
+        border-bottom: 2px solid #17a2b8;
+        padding-bottom: 10px;
+      }
+
+      .user-stats-details {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        text-align: center;
+      }
+
+      .user-stat-item {
+        padding: 15px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s;
+      }
+
+      .user-stat-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .user-stat-value {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #0078d7;
+        margin-bottom: 5px;
+      }
+
+      .user-stat-label {
+        font-size: 0.85rem;
+        color: #666;
+        font-weight: 500;
+      }
+
+      /* User-specific history section */
+      .user-history-section {
+        margin-top: 30px;
+        padding: 20px;
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border-radius: 12px;
+        border: 2px solid #6c757d;
+      }
+
+      .user-history-title {
+        font-weight: 700;
+        color: #495057;
+        margin-bottom: 15px;
+        text-align: center;
+        font-size: 1.2rem;
+        border-bottom: 2px solid #6c757d;
+        padding-bottom: 10px;
+      }
+
+      @media (max-width: 768px) {
+        .stock-item:only-child,
+        .stock-item:nth-child(3):nth-last-child(1) {
+          grid-column: 1;
+          width: 100%;
+        }
+      }
+
+      /* Responsive adjustments for mobile */
+      @media (max-width: 768px) {
+        body {
+          padding: 10px;
+        }
+
+        .container {
+          padding: 15px;
+          border-radius: 12px;
+        }
+
+        .header-container {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .header-right {
+          justify-content: space-between;
+        }
+
+        .form-row {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .form-group {
+          min-width: 100%;
+        }
+
+        .stock-banner {
+          flex-direction: column;
+          text-align: center;
+          gap: 15px;
+        }
+
+        .stock-banner-info {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .stock-details {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .user-stats-details {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 10px;
+        }
+
+        input,
+        select,
+        button {
+          padding: 16px 14px;
+          font-size: 16px;
+        }
+
+        .radio-option {
+          min-width: calc(50% - 5px);
+          padding: 18px 12px;
+        }
+
+        .history-table {
+          font-size: 14px;
+        }
+
+        .history-table th,
+        .history-table td {
+          padding: 10px 6px;
+          font-size: 0.85rem;
+        }
+
+        .auth-box {
+          padding: 30px 20px;
+        }
+
+        .weight-stock-info {
+          position: relative;
+          top: 0;
+          right: 0;
+          transform: none;
+          margin-top: 5px;
+          display: inline-block;
+        }
+
+        input#sellWeight {
+          padding-right: 14px;
+        }
+
+        .user-stat-item {
+          padding: 12px 8px;
+        }
+
+        .user-stat-value {
+          font-size: 1.2rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 12px;
+        }
+
+        .stock-details {
+          grid-template-columns: 1fr;
+        }
+
+        .radio-option {
+          min-width: 100%;
+          padding: 20px 16px;
+        }
+
+        .header-left h1 {
+          font-size: 1.4rem;
+        }
+
+        .section-title {
+          font-size: 1.2rem;
+        }
+
+        .price-display {
+          font-size: 1.1rem;
+          padding: 14px;
+        }
+
+        button {
+          padding: 18px;
+          font-size: 1rem;
+        }
+
+        .user-info {
+          font-size: 0.85rem;
+          padding: 6px 12px;
+        }
+
+        .stock-banner-value {
+          font-size: 1.5rem;
+        }
+
+        .user-stats-details {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Touch-friendly improvements */
+      @media (hover: none) and (pointer: coarse) {
+        button,
+        .radio-option {
+          min-height: 56px;
+        }
+
+        .radio-option {
+          padding: 22px 16px;
+        }
+
+        input,
+        select {
+          min-height: 48px;
+          font-size: 16px;
+        }
+
+        .radio-option:active {
+          transform: scale(0.98);
+        }
+      }
+
+      /* Dark mode support */
+      @media (prefers-color-scheme: dark) {
+        body {
+          background-color: #1a1a1a;
+          color: #ffffff;
+        }
+
+        .container {
+          background-color: #2d2d2d;
+          color: #ffffff;
+        }
+
+        .header-left h1 {
+          color: #ffffff;
+        }
+
+        .header-left .welcome-text {
+          color: #cccccc;
+        }
+
+        .user-info {
+          background-color: #3d3d3d;
+          border-color: #555;
+        }
+
+        input,
+        select {
+          background-color: #3d3d3d;
+          color: #ffffff;
+          border-color: #555;
+        }
+
+        .section {
+          background-color: #333333;
+          border-color: #444;
+        }
+
+        .radio-option {
+          background-color: #3d3d3d;
+          border-color: #555;
+        }
+
+        .radio-option.selected {
+          background-color: #4a4a4a;
+        }
+
+        .radio-option.buy-option.selected {
+          background-color: #2d4a2d;
+          border-color: #28a745;
+        }
+
+        .radio-option.sell-option.selected {
+          background-color: #4a2d2d;
+          border-color: #dc3545;
+        }
+
+        .stock-banner {
+          background: linear-gradient(135deg, #2e7d32, #1b5e20);
+        }
+
+        .stock-info {
+          background: linear-gradient(135deg, #2d3d4a, #3d4a5a);
+          border-color: #0078d7;
+        }
+
+        .stock-item {
+          background-color: #3d3d3d;
+        }
+
+        .history-table {
+          color: #ffffff;
+        }
+
+        tr:nth-child(even) {
+          background-color: #3d3d3d;
+        }
+
+        .permission-denied {
+          background: linear-gradient(135deg, #4a2d2d, #5a3737);
+          color: #ffcccc;
+          border-color: #dc3545;
+        }
+
+        .user-stats {
+          background: linear-gradient(135deg, #2d4a4a, #3d5a5a);
+          border-color: #17a2b8;
+        }
+
+        .user-stats-title {
+          color: #a3d9e6;
+        }
+
+        .user-stat-item {
+          background-color: #3d3d3d;
+        }
+
+        .user-history-section {
+          background: linear-gradient(135deg, #3d3d3d, #4a4a4a);
+          border-color: #6c757d;
+        }
+
+        .user-history-title {
+          color: #cccccc;
+          border-color: #6c757d;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Authentication Overlay -->
+    <div id="authOverlay" class="auth-overlay" style="display: none">
+      <div class="auth-box">
+        <div class="loading-spinner"></div>
+        <h2>Authenticating...</h2>
+        <p>Please wait while we verify your credentials.</p>
+        <p id="authError" style="color: #dc3545; display: none"></p>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- Header with user info -->
+      <div class="header-container">
+        <div class="header-left">
+          <h1>🍃 Tea Business Tracker</h1>
+          <div class="welcome-text" id="welcomeText">
+            Welcome! Loading user info...
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="user-info">
+            <span>👤</span>
+            <span id="userName">Loading...</span>
+            <span class="role-badge" id="userRole">user</span>
+          </div>
+          <button class="btn-logout" onclick="logout()">Logout</button>
+        </div>
+      </div>
+
+      <!-- Admin button (only for admin users) -->
+      <div id="adminSection" style="display: none; margin-bottom: 20px">
+        <a href="admin.html" class="admin-btn">⚙️ Admin Panel</a>
+      </div>
+
+      <!-- Stock Banner - Top Remaining Stock Display -->
+      <!-- <div id="stockBanner" class="stock-banner" style="display: none">
+        <div class="stock-banner-info">
+          <div class="stock-banner-icon">📦</div>
+          <div class="stock-banner-text">
+            <h3>Available Stock</h3>
+            <p>Current company tea inventory</p>
+          </div>
+        </div>
+        <div class="stock-banner-value" id="remainingStockBanner">0.00 kg</div>
+      </div> -->
+
+      <!-- User Stats (for regular users) -->
+      <div id="userStats" class="user-stats">
+        <div class="user-stats-title">📊 YOUR ACTIVITY SUMMARY</div>
+        <div class="user-stats-details">
+          <div class="user-stat-item">
+            <div class="user-stat-value" id="userPurchaseCount">0</div>
+            <div class="user-stat-label">Purchases Made</div>
+          </div>
+          <div class="user-stat-item">
+            <div class="user-stat-value" id="userSalesCount">0</div>
+            <div class="user-stat-label">Sales Made</div>
+          </div>
+          <div class="user-stat-item">
+            <div class="user-stat-value" id="userPurchaseWeight">0.00 kg</div>
+            <div class="user-stat-label">Total Purchased</div>
+          </div>
+          <div class="user-stat-item">
+            <div class="user-stat-value" id="userSalesWeight">0.00 kg</div>
+            <div class="user-stat-label">Total Sold</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stock Information Display - FOR ALL USERS -->
+      <div id="stockInfo" class="stock-info" style="display: none">
+        <div class="stock-title" id="stockTitle">
+          📊 COMPANY STOCK INFORMATION
+        </div>
+        <div class="stock-details">
+          <div class="stock-item">
+            <div class="stock-value" id="totalWeight">0.00</div>
+            <div class="stock-label">Total Purchased (kg)</div>
+          </div>
+          <div class="stock-item">
+            <div class="stock-value" id="soldWeight">0.00</div>
+            <div class="stock-label">Total Sold (kg)</div>
+          </div>
+          <div class="stock-item">
+            <div class="stock-value" id="remainingWeight">0.00</div>
+            <div class="stock-label">Remaining Stock (kg)</div>
+          </div>
+          <div class="stock-item">
+            <div class="stock-value" id="profit">₹0.00</div>
+            <div class="stock-label">Total Profit</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Permission denied message for regular users -->
+      <div
+        id="permissionDenied"
+        class="permission-denied"
+        style="display: none"
+      >
+        ⚠️ <span class="admin-only">Admin Only Feature:</span> This feature is
+        restricted to administrators only. Please contact your administrator for
+        access to all history, stock information, and reports.
+      </div>
+
+      <!-- Radio Buttons for Buy/Sell -->
+      <div class="radio-group">
+        <div
+          class="radio-option buy-option selected"
+          onclick="selectTransactionType('buy')"
+        >
+          <input
+            type="radio"
+            id="buyOption"
+            name="transactionType"
+            value="buy"
+            checked
+          />
+          <label for="buyOption">
+            <span class="radio-icon">📦</span>
+            <span>BUY TEA</span>
+          </label>
+        </div>
+        <div
+          class="radio-option sell-option"
+          onclick="selectTransactionType('sell')"
+        >
+          <input
+            type="radio"
+            id="sellOption"
+            name="transactionType"
+            value="sell"
+          />
+          <label for="sellOption">
+            <span class="radio-icon">💰</span>
+            <span>SELL TEA</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- BUY Section -->
+      <div id="buySection" class="section buy-section" style="display: block">
+        <div class="section-title">BUY TEA STOCK</div>
+
+        <label for="gardenName">Garden name (Factory):</label>
+        <input
+          type="text"
+          id="gardenName"
+          placeholder="Enter garden/factory name"
+        />
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="numBags">Number of Bags:</label>
+            <input
+              type="number"
+              id="numBags"
+              placeholder="Bags"
+              min="0"
+              step="1"
+            />
+          </div>
+          <div class="form-group">
+            <label for="weightKg">Weight (kg):</label>
+            <input
+              type="number"
+              id="weightKg"
+              placeholder="kg"
+              step="0.01"
+              min="0"
+            />
+          </div>
+        </div>
+
+        <label for="totalBuyingPrice">Total Price (₹):</label>
+        <input
+          type="number"
+          id="totalBuyingPrice"
+          placeholder="Enter total price in ₹"
+          step="0.01"
+          min="0"
+        />
+
+        <!-- Calculation Display -->
+        <div id="calculationBox" class="calculation-box" style="display: none">
+          <div class="calculation-text" id="calculationText"></div>
+        </div>
+
+        <button class="btn-buy" onclick="savePurchase()">
+          💾 SAVE PURCHASE
+        </button>
+      </div>
+
+      <!-- SELL Section -->
+      <div id="sellSection" class="section sell-section" style="display: none">
+        <div class="section-title">SELL TEA</div>
+
+        <label for="customerName">Customer name:</label>
+        <input
+          type="text"
+          id="customerName"
+          placeholder="Enter customer name"
+        />
+
+        <label for="sellWeight">Weight (kg):</label>
+        <div class="weight-input-container">
+          <input
+            type="number"
+            id="sellWeight"
+            placeholder="Enter weight in kg"
+            step="0.01"
+            min="0"
+            max="0"
+            oninput="calculateSellPrice()"
+          />
+          <div class="weight-stock-info" id="weightStockInfo">Max: 0.00 kg</div>
+        </div>
+
+        <label for="teaType">Type:</label>
+        <select id="teaType">
+          <option value="direct">Direct</option>
+          <option value="blend">Blend</option>
+        </select>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="pricePerKg">Price per kg (₹):</label>
+            <input
+              type="number"
+              id="pricePerKg"
+              placeholder="₹ per kg"
+              step="0.01"
+              min="0"
+              oninput="calculateSellPrice()"
+            />
+          </div>
+          <div class="form-group">
+            <label for="sellingPrice">Total Selling Price (₹):</label>
+            <input
+              type="number"
+              id="sellingPrice"
+              placeholder="Total ₹"
+              step="0.01"
+              min="0"
+              readonly
+              style="background-color: #f0f0f0; opacity: 0.9"
+            />
+          </div>
+        </div>
+
+        <!-- Final Price Display -->
+        <div id="finalPriceDisplay" class="price-display" style="display: none">
+          Final Selling Price: ₹<span id="finalPrice">0.00</span>
+        </div>
+
+        <button class="btn-sell" onclick="saveSale()">💰 SAVE SALE</button>
+      </div>
+
+      <!-- History and Download Buttons (ADMIN ONLY) -->
+      <div id="adminControls" style="display: none">
+        <div class="form-row" style="margin-top: 20px; gap: 10px">
+          <button class="btn-secondary" onclick="viewPurchaseHistory()">
+            📜 All Purchase History
+          </button>
+          <button class="btn-secondary" onclick="viewSalesHistory()">
+            📊 All Sales History
+          </button>
+        </div>
+
+        <div class="form-row" style="margin-top: 10px; gap: 10px">
+          <button onclick="downloadPurchaseExcel()">⬇️ Purchase Excel</button>
+          <button onclick="downloadSalesExcel()">⬇️ Sales Excel</button>
+        </div>
+      </div>
+
+      <!-- Regular User Controls (Only basic actions) -->
+      <div id="userControls" style="display: none">
+        <div class="form-row" style="margin-top: 20px; gap: 10px">
+          <button class="btn-secondary" onclick="viewUserPurchaseHistory()">
+            📜 My Purchase History
+          </button>
+          <button class="btn-secondary" onclick="viewUserSalesHistory()">
+            📊 My Sales History
+          </button>
+        </div>
+
+        <div class="form-row" style="margin-top: 10px; gap: 10px">
+          <button onclick="showPermissionDenied('Download Excel Reports')">
+            ⬇️ Excel Reports (Admin Only)
+          </button>
+        </div>
+      </div>
+
+      <!-- Purchase History Section (For All Users - filtered by role) -->
+      <div id="purchaseHistory" style="display: none; margin-top: 30px">
+        <div id="adminPurchaseHistory" style="display: none">
+          <h3 style="text-align: center; margin-bottom: 15px; color: #6f42c1">
+            📦 ALL PURCHASE HISTORY (All Users)
+          </h3>
+        </div>
+        <div
+          id="userPurchaseHistory"
+          style="display: none"
+          class="user-history-section"
+        >
+          <div class="user-history-title">📦 MY PURCHASE HISTORY</div>
+        </div>
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Purchase ID</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Garden</th>
+              <th>Bags</th>
+              <th>Kg</th>
+              <th>Price</th>
+              <th>Price/kg</th>
+              <th>Created By</th>
+            </tr>
+          </thead>
+          <tbody id="purchaseHistoryBody"></tbody>
+        </table>
+      </div>
+
+      <!-- Sales History Section (For All Users - filtered by role) -->
+      <div id="salesHistory" style="display: none; margin-top: 30px">
+        <div id="adminSalesHistory" style="display: none">
+          <h3 style="text-align: center; margin-bottom: 15px; color: #6f42c1">
+            💰 ALL SALES HISTORY (All Users)
+          </h3>
+        </div>
+        <div
+          id="userSalesHistory"
+          style="display: none"
+          class="user-history-section"
+        >
+          <div class="user-history-title">💰 MY SALES HISTORY</div>
+        </div>
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Sales ID</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Customer</th>
+              <th>Weight</th>
+              <th>Type</th>
+              <th>Sell Rate</th>
+              <th>Price/kg</th>
+              <th>Created By</th>
+            </tr>
+          </thead>
+          <tbody id="salesHistoryBody"></tbody>
+        </table>
+      </div>
+
+      <div class="footer">
+        © 2025 Tea Business Tracker |
+        <span id="userTypeDisplay">Loading user type...</span>
+      </div>
+    </div>
+
+    <script>
+      // Global variables
+      let currentUser = null;
+      let authToken = null;
+      let totalPurchasedWeight = 0;
+      let totalSoldWeight = 0;
+      let remainingWeight = 0;
+      let totalProfit = 0;
+      let availableStockForWeightField = 0;
+      let userPurchaseWeight = 0;
+      let userSalesWeight = 0;
+
+      // Authentication functions
+      async function checkAuth() {
+        authToken = localStorage.getItem("authToken");
+        const savedUser = localStorage.getItem("user");
+
+        if (!authToken || !savedUser) {
+          redirectToLogin();
+          return;
+        }
+
+        try {
+          currentUser = JSON.parse(savedUser);
+
+          const response = await fetch("/api/verify-token", {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            currentUser = data.user;
+            localStorage.setItem("user", JSON.stringify(currentUser));
+            displayUserInfo();
+            initializeApp();
+          } else {
+            redirectToLogin();
+          }
+        } catch (error) {
+          console.error("Auth check failed:", error);
+          redirectToLogin();
+        }
+      }
+
+      function redirectToLogin() {
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("user");
+        window.location.href = "login.html";
+      }
+
+      function displayUserInfo() {
+        if (currentUser) {
+          document.getElementById("userName").textContent =
+            currentUser.full_name;
+          const roleBadge = document.getElementById("userRole");
+          roleBadge.textContent = currentUser.role;
+          roleBadge.className = "role-badge " + currentUser.role;
+
+          document.getElementById(
+            "welcomeText"
+          ).textContent = `Welcome, ${currentUser.full_name}!`;
+          document.getElementById("userTypeDisplay").textContent =
+            currentUser.role === "admin" ? "Administrator Mode" : "User Mode";
+
+          // Show admin button for admin users
+          if (currentUser.role === "admin") {
+            document.getElementById("adminSection").style.display = "block";
+            document.getElementById("adminControls").style.display = "block";
+            document.getElementById("userControls").style.display = "none";
+            document.getElementById("userStats").style.display = "none";
+            document.getElementById("permissionDenied").style.display = "none";
+          } else {
+            document.getElementById("adminSection").style.display = "none";
+            document.getElementById("adminControls").style.display = "none";
+            document.getElementById("userControls").style.display = "block";
+            document.getElementById("userStats").style.display = "block";
+            document.getElementById("permissionDenied").style.display = "none";
+
+            // Initially hide all stock items except remaining
+            const stockItems = document.querySelectorAll(".stock-item");
+            stockItems[0].style.display = "none"; // Total Purchased
+            stockItems[1].style.display = "none"; // Total Sold
+            stockItems[2].style.display = "block"; // Remaining Stock
+            stockItems[3].style.display = "none"; // Total Profit
+          }
+        }
+      }
+
+      async function loadUserStats() {
+        try {
+          // Load user's purchase stats
+          const purchaseRes = await fetch("http://user/stats", {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          });
+
+          if (purchaseRes.ok) {
+            const data = await purchaseRes.json();
+            if (data.success) {
+              const stats = data.stats;
+              document.getElementById("userPurchaseCount").textContent =
+                stats.purchase_count;
+              document.getElementById("userSalesCount").textContent =
+                stats.sales_count;
+              document.getElementById("userPurchaseWeight").textContent =
+                stats.purchase_weight + " kg";
+              document.getElementById("userSalesWeight").textContent =
+                stats.sales_weight + " kg";
+
+              userPurchaseWeight = parseFloat(stats.purchase_weight) || 0;
+              userSalesWeight = parseFloat(stats.sales_weight) || 0;
+            }
+          }
+        } catch (error) {
+          console.error("Error loading user stats:", error);
+        }
+      }
+
+      function showPermissionDenied(feature) {
+        // Don't hide stock info when showing permission denied
+        document.getElementById("stockInfo").style.display = "block";
+        // document.getElementById("stockBanner").style.display = "block";
+
+        document.getElementById("permissionDenied").style.display = "block";
+        document.getElementById("permissionDenied").innerHTML =
+          `⚠️ <span class="admin-only">Admin Only Feature:</span> ${feature} is restricted to administrators only. ` +
+          `Please contact your administrator for access to all history, stock information, and reports.`;
+
+        // Hide other history sections
+        document.getElementById("purchaseHistory").style.display = "none";
+        document.getElementById("salesHistory").style.display = "none";
+      }
+
+      function logout() {
+        if (confirm("Are you sure you want to logout?")) {
+          fetch("/api/logout", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }).catch(console.error);
+
+          localStorage.removeItem("authToken");
+          localStorage.removeItem("user");
+          window.location.href = "login.html";
+        }
+      }
+
+      // Application initialization
+      async function initializeApp() {
+        // Initialize sections
+        toggleTransactionType();
+
+        // Load stock data for ALL users
+        await loadStockData();
+
+        // Load available stock for weight field
+        await loadAvailableStockForWeightField();
+
+        // Load user-specific data
+        if (currentUser.role !== "admin") {
+          await loadUserStats();
+          document.getElementById("userStats").style.display = "block";
+        }
+
+        // Prevent form submission on enter key
+        document.addEventListener("keydown", function (e) {
+          if (
+            e.key === "Enter" &&
+            e.target.type !== "button" &&
+            e.target.type !== "submit"
+          ) {
+            e.preventDefault();
+          }
+        });
+
+        // Hide auth overlay
+        document.getElementById("authOverlay").style.display = "none";
+      }
+
+      // Function to handle transaction type selection
+      function selectTransactionType(type) {
+        const buyOption = document.querySelector(".radio-option.buy-option");
+        const sellOption = document.querySelector(".radio-option.sell-option");
+        const buyRadio = document.getElementById("buyOption");
+        const sellRadio = document.getElementById("sellOption");
+
+        if (type === "buy") {
+          buyOption.classList.add("selected");
+          sellOption.classList.remove("selected");
+          buyRadio.checked = true;
+          toggleTransactionType();
+        } else if (type === "sell") {
+          sellOption.classList.add("selected");
+          buyOption.classList.remove("selected");
+          sellRadio.checked = true;
+          toggleTransactionType();
+        }
+      }
+
+      // Load stock data from server (for ALL users)
+      async function loadStockData() {
+        try {
+          const res = await fetch("/api/current-stock", {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          });
+
+          if (res.status === 403) {
+            console.log("Token expired or invalid, redirecting to login...");
+            redirectToLogin();
+            return;
+          }
+
+          if (!res.ok) {
+            console.error("Error loading stock data:", res.status);
+            updateStockDisplayWithDefaults();
+            return;
+          }
+
+          const stockData = await res.json();
+
+          // Update global variables
+          totalPurchasedWeight = parseFloat(stockData.total_weight) || 0;
+          totalSoldWeight = parseFloat(stockData.sold_weight) || 0;
+          remainingWeight = parseFloat(stockData.remaining_weight) || 0;
+          totalProfit = parseFloat(stockData.profit) || 0;
+
+          // Update stock display
+          updateStockDisplay();
+
+          // // Also update the stock banner
+          // updateStockBanner();
+        } catch (error) {
+          console.error("Error loading stock data:", error);
+          // Show empty/zero values if there's an error
+          updateStockDisplayWithDefaults();
+        }
+      }
+
+      // Load available stock specifically for weight field
+      async function loadAvailableStockForWeightField() {
+        try {
+          const res = await fetch("/api/available-stock", {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          });
+
+          if (res.status === 403) {
+            console.log("Token expired for available stock endpoint");
+            return;
+          }
+
+          if (res.ok) {
+            const data = await res.json();
+            if (data.success) {
+              availableStockForWeightField =
+                parseFloat(data.available_stock) || 0;
+              updateWeightFieldStockInfo();
+            }
+          } else {
+            console.log(
+              "Available stock endpoint not ready yet, using current stock"
+            );
+            // Fallback to using the already loaded stock data
+            availableStockForWeightField = remainingWeight;
+            updateWeightFieldStockInfo();
+          }
+        } catch (error) {
+          console.error("Error loading available stock:", error);
+          // Fallback to using the already loaded stock data
+          availableStockForWeightField = remainingWeight;
+          updateWeightFieldStockInfo();
+        }
+      }
+
+      // // Update the stock banner at the top
+      // function updateStockBanner() {
+      //   const banner = document.getElementById("stockBanner");
+      //   const bannerValue = document.getElementById("remainingStockBanner");
+
+      //   if (remainingWeight > 0) {
+      //     bannerValue.textContent = remainingWeight.toFixed(2) + " kg";
+      //     banner.style.display = "flex";
+      //   } else {
+      //     bannerValue.textContent = "0.00 kg";
+      //     banner.style.display = "flex"; // Still show but with 0
+      //   }
+      // }
+
+      // Update the weight field with stock information
+      function updateWeightFieldStockInfo() {
+        const weightStockInfo = document.getElementById("weightStockInfo");
+        const sellWeightInput = document.getElementById("sellWeight");
+
+        if (availableStockForWeightField > 0) {
+          weightStockInfo.textContent =
+            "Max: " + availableStockForWeightField.toFixed(2) + " kg";
+          weightStockInfo.style.backgroundColor = "#4caf50";
+          sellWeightInput.setAttribute("max", availableStockForWeightField);
+          sellWeightInput.setAttribute(
+            "placeholder",
+            "Max: " + availableStockForWeightField.toFixed(2) + " kg"
+          );
+        } else {
+          weightStockInfo.textContent = "No stock";
+          weightStockInfo.style.backgroundColor = "#dc3545";
+          sellWeightInput.setAttribute("max", 0);
+          sellWeightInput.setAttribute("placeholder", "No available stock");
+        }
+      }
+
+      // Function to show default/empty stock values
+      function updateStockDisplayWithDefaults() {
+        document.getElementById("stockInfo").style.display = "block";
+
+        if (currentUser.role === "admin") {
+          document.getElementById("stockTitle").textContent =
+            "📊 COMPANY STOCK OVERVIEW";
+          document.getElementById("totalWeight").textContent = "0.00";
+          document.getElementById("soldWeight").textContent = "0.00";
+          document.getElementById("remainingWeight").textContent = "0.00";
+          document.getElementById("profit").textContent = "₹0.00";
+
+          // Show all items for admin
+          document.querySelectorAll(".stock-item").forEach((item) => {
+            item.style.display = "block";
+          });
+        } else {
+          document.getElementById("stockTitle").textContent =
+            "📊 AVAILABLE STOCK";
+
+          // Hide all except remaining stock
+          const stockItems = document.querySelectorAll(".stock-item");
+          stockItems[0].style.display = "none"; // Total Purchased
+          stockItems[1].style.display = "none"; // Total Sold
+          stockItems[2].style.display = "block"; // Remaining Stock
+          stockItems[3].style.display = "none"; // Total Profit
+
+          document.getElementById("remainingWeight").textContent = "0.00";
+        }
+
+        // document.getElementById("stockBanner").style.display = "flex";
+        // document.getElementById("remainingStockBanner").textContent = "0.00 kg";
+      }
+
+      // Update stock display (DIFFERENT FOR ADMIN VS USER)
+      function updateStockDisplay() {
+        // Always show stock info for ALL users
+        document.getElementById("stockInfo").style.display = "block";
+
+        if (currentUser.role === "admin") {
+          // Admin sees full company overview
+          document.getElementById("stockTitle").textContent =
+            "📊 COMPANY STOCK OVERVIEW";
+          document.getElementById("totalWeight").textContent =
+            totalPurchasedWeight.toFixed(2);
+          document.getElementById("soldWeight").textContent =
+            totalSoldWeight.toFixed(2);
+          document.getElementById("remainingWeight").textContent = Math.max(
+            0,
+            remainingWeight
+          ).toFixed(2);
+          document.getElementById("profit").textContent =
+            "₹" + totalProfit.toFixed(2);
+
+          // Show all 4 items for admin
+          document.querySelectorAll(".stock-item").forEach((item) => {
+            item.style.display = "block";
+          });
+        } else {
+          // Regular user sees only available stock
+          document.getElementById("stockTitle").textContent =
+            "📊 AVAILABLE STOCK";
+
+          // Hide the first 3 items, keep only remaining stock
+          const stockItems = document.querySelectorAll(".stock-item");
+
+          // Item 1: Total Purchased - HIDE
+          stockItems[0].style.display = "none";
+
+          // Item 2: Total Sold - HIDE
+          stockItems[1].style.display = "none";
+
+          // Item 3: Remaining Stock - SHOW (update value)
+          stockItems[2].style.display = "block";
+          document.getElementById("remainingWeight").textContent = Math.max(
+            0,
+            remainingWeight
+          ).toFixed(2);
+
+          // Item 4: Total Profit - HIDE
+          stockItems[3].style.display = "none";
+        }
+      }
+
+      // Toggle between Buy and Sell sections
+      function toggleTransactionType() {
+        const transactionType = document.querySelector(
+          'input[name="transactionType"]:checked'
+        ).value;
+        const buySection = document.getElementById("buySection");
+        const sellSection = document.getElementById("sellSection");
+
+        // Only show stock info for admin
+        const stockInfo = document.getElementById("stockInfo");
+        // const stockBanner = document.getElementById("stockBanner");
+
+        // if (currentUser.role === "admin") {
+        //   stockInfo.style.display = "block";
+        //   stockBanner.style.display = "flex";
+        // } else {
+        //   stockInfo.style.display = "none";
+        //   stockBanner.style.display = "none";
+        // }
+
+        if (transactionType === "buy") {
+          buySection.style.display = "block";
+          sellSection.style.display = "none";
+        } else {
+          buySection.style.display = "none";
+          sellSection.style.display = "block";
+
+          // Update weight field with current stock info
+          if (currentUser.role === "admin") {
+            updateWeightFieldStockInfo();
+          }
+        }
+      }
+      // Calculate sell price based on weight and price per kg
+      function calculateSellPrice() {
+        const sellWeight =
+          parseFloat(document.getElementById("sellWeight").value) || 0;
+        const pricePerKg =
+          parseFloat(document.getElementById("pricePerKg").value) || 0;
+
+        const sellingPriceInput = document.getElementById("sellingPrice");
+        const finalPriceDisplay = document.getElementById("finalPriceDisplay");
+        const finalPriceSpan = document.getElementById("finalPrice");
+
+        // For admin users, validate against available stock
+        if (currentUser.role === "admin") {
+          if (sellWeight > availableStockForWeightField) {
+            alert(
+              "❌ Cannot sell more than available stock! Available: " +
+                availableStockForWeightField.toFixed(2) +
+                " kg"
+            );
+            document.getElementById("sellWeight").value =
+              availableStockForWeightField.toFixed(2);
+            calculateSellPrice(); // Recalculate with corrected value
+            return;
+          }
+        }
+
+        if (sellWeight > 0 && pricePerKg > 0) {
+          const totalPrice = sellWeight * pricePerKg;
+          sellingPriceInput.value = totalPrice.toFixed(2);
+          finalPriceSpan.textContent = totalPrice.toFixed(2);
+          finalPriceDisplay.style.display = "block";
+        } else {
+          sellingPriceInput.value = "";
+          finalPriceDisplay.style.display = "none";
+        }
+      }
+
+      // Show calculation when both fields are filled (Buy section)
+      function updateCalculation() {
+        const numBags = parseInt(document.getElementById("numBags").value) || 0;
+        const weightKg =
+          parseFloat(document.getElementById("weightKg").value) || 0;
+        const totalBuyingPrice = parseFloat(
+          document.getElementById("totalBuyingPrice").value
+        );
+
+        const calculationBox = document.getElementById("calculationBox");
+        const calculationText = document.getElementById("calculationText");
+
+        const totalWeight = weightKg;
+
+        if (totalWeight > 0 && totalBuyingPrice > 0) {
+          const pricePerKg = totalBuyingPrice / totalWeight;
+          calculationText.textContent =
+            "Price per kg: ₹ " + pricePerKg.toFixed(2);
+          calculationBox.style.display = "block";
+        } else {
+          calculationBox.style.display = "none";
+        }
+      }
+
+      // Show calculation for buy section
+      document
+        .getElementById("numBags")
+        .addEventListener("input", updateCalculation);
+      document
+        .getElementById("weightKg")
+        .addEventListener("input", updateCalculation);
+      document
+        .getElementById("totalBuyingPrice")
+        .addEventListener("input", updateCalculation);
+
+      // BUY Function
+      async function savePurchase() {
+        const gardenName = document.getElementById("gardenName").value.trim();
+        const numBags = parseInt(document.getElementById("numBags").value) || 0;
+        const weightKg =
+          parseFloat(document.getElementById("weightKg").value) || 0;
+        const totalBuyingPrice = parseFloat(
+          document.getElementById("totalBuyingPrice").value
+        );
+
+        if (!gardenName) {
+          alert("Please enter garden name.");
+          return;
+        }
+        if (numBags <= 0 && weightKg <= 0) {
+          alert("Please enter either bags or kg.");
+          return;
+        }
+        if (isNaN(totalBuyingPrice) || totalBuyingPrice <= 0) {
+          alert("Please enter a valid price.");
+          return;
+        }
+
+        const pricePerKg = weightKg > 0 ? totalBuyingPrice / weightKg : 0;
+
+        const purchaseData = {
+          garden_name: gardenName,
+          num_bags: numBags,
+          weight_kg: weightKg,
+          total_price: totalBuyingPrice,
+          price_per_kg: pricePerKg,
+          total_amount: totalBuyingPrice,
+        };
+
+        try {
+          const res = await fetch("/api/save-purchase", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${authToken}`,
+            },
+            body: JSON.stringify(purchaseData),
+          });
+          const result = await res.json();
+
+          if (result.success) {
+            alert("✅ Purchase saved successfully!");
+
+            // ========== IMPORTANT: REFRESH STOCK DATA AFTER PURCHASE ==========
+            await loadStockData(); // Refresh stock data
+            await loadAvailableStockForWeightField(); // Refresh available stock for weight field
+            // ==================================================================
+
+            // Reset form
+            document.getElementById("gardenName").value = "";
+            document.getElementById("numBags").value = "";
+            document.getElementById("weightKg").value = "";
+            document.getElementById("totalBuyingPrice").value = "";
+            document.getElementById("calculationBox").style.display = "none";
+
+            // Reload user-specific data
+            if (currentUser.role !== "admin") {
+              await loadUserStats();
+            }
+          } else {
+            alert("❌ Error: " + result.message);
+          }
+        } catch (error) {
+          console.error(error);
+          alert("❌ Error saving purchase data.");
+        }
+      }
+
+      // SELL Function
+      async function saveSale() {
+        const customerName = document
+          .getElementById("customerName")
+          .value.trim();
+        const sellWeight =
+          parseFloat(document.getElementById("sellWeight").value) || 0;
+        const teaType = document.getElementById("teaType").value;
+        const pricePerKg =
+          parseFloat(document.getElementById("pricePerKg").value) || 0;
+        const sellingPrice =
+          parseFloat(document.getElementById("sellingPrice").value) || 0;
+
+        if (!customerName) {
+          alert("Please enter customer name.");
+          return;
+        }
+        if (isNaN(sellWeight) || sellWeight <= 0) {
+          alert("Please enter a valid weight.");
+          return;
+        }
+        if (isNaN(pricePerKg) || pricePerKg <= 0) {
+          alert("Please enter a valid price per kg.");
+          return;
+        }
+
+        // For admin users only: Check if enough stock is available
+        if (currentUser.role === "admin") {
+          if (sellWeight > availableStockForWeightField) {
+            alert(
+              "❌ Insufficient stock! Available: " +
+                availableStockForWeightField.toFixed(2) +
+                " kg, Requested: " +
+                sellWeight.toFixed(2) +
+                " kg"
+            );
+            return;
+          }
+        }
+
+        const saleData = {
+          customer_name: customerName,
+          sale_type: "retail",
+          tea_type: teaType,
+          details: {
+            weight_kg: sellWeight,
+            price_per_unit: sellingPrice,
+            price_per_kg: pricePerKg,
+            quantity: 1,
+          },
+          total_amount: sellingPrice,
+        };
+
+        try {
+          const res = await fetch("/api/save-sale", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${authToken}`,
+            },
+            body: JSON.stringify(saleData),
+          });
+          const result = await res.json();
+
+          if (result.success) {
+            alert("✅ Sale saved successfully!");
+
+            // ========== IMPORTANT: REFRESH STOCK DATA AFTER SALE ==========
+            await loadStockData(); // Refresh stock data
+            await loadAvailableStockForWeightField(); // Refresh available stock for weight field
+            // =============================================================
+
+            // Reset form
+            document.getElementById("customerName").value = "";
+            document.getElementById("sellWeight").value = "";
+            document.getElementById("pricePerKg").value = "";
+            document.getElementById("sellingPrice").value = "";
+            document.getElementById("finalPriceDisplay").style.display = "none";
+
+            // Reload user-specific data
+            if (currentUser.role !== "admin") {
+              await loadUserStats();
+            }
+          } else {
+            alert("❌ Error: " + result.message);
+          }
+        } catch (error) {
+          console.error(error);
+          alert("❌ Error saving sale data.");
+        }
+      }
+
+      // ADMIN ONLY: View all purchase history
+      async function viewPurchaseHistory() {
+        if (currentUser.role !== "admin") {
+          showPermissionDenied("All Purchase History");
+          return;
+        }
+
+        try {
+          const res = await fetch(
+            "/api/admin/purchase-history", // CHANGED THIS LINE
+            {
+              headers: {
+                Authorization: `Bearer ${authToken}`,
+              },
+            }
+          );
+
+          if (res.status === 403) {
+            showPermissionDenied("All Purchase History");
+            return;
+          }
+
+          const data = await res.json();
+
+          const tableBody = document.getElementById("purchaseHistoryBody");
+          tableBody.innerHTML = "";
+
+          if (data.length === 0) {
+            tableBody.innerHTML =
+              '<tr><td colspan="9">No purchase records found</td></tr>';
+          } else {
+            data.forEach((purchase) => {
+              const date = new Date(purchase.created_at).toLocaleDateString(
+                "en-IN"
+              );
+              const time = new Date(purchase.created_at).toLocaleTimeString(
+                "en-IN"
+              );
+
+              const row = `
+              <tr>
+                <td><strong>${purchase.purchase_id}</strong></td>
+                <td>${date}</td>
+                <td>${time}</td>
+                <td>${purchase.garden_name}</td>
+                <td>${purchase.num_bags}</td>
+                <td>${parseFloat(purchase.weight_kg).toFixed(2)} kg</td>
+                <td>₹ ${parseFloat(purchase.total_price).toFixed(2)}</td>
+                <td>₹ ${parseFloat(purchase.price_per_kg).toFixed(2)}</td>
+                <td>${
+                  purchase.created_by_username ||
+                  purchase.created_by ||
+                  currentUser.username
+                }</td>
+              </tr>
+            `;
+              tableBody.innerHTML += row;
+            });
+          }
+
+          document.getElementById("purchaseHistory").style.display = "block";
+          document.getElementById("adminPurchaseHistory").style.display =
+            "block";
+          document.getElementById("userPurchaseHistory").style.display = "none";
+          document.getElementById("salesHistory").style.display = "none";
+          document.getElementById("adminSalesHistory").style.display = "none";
+          document.getElementById("userSalesHistory").style.display = "none";
+          document.getElementById("permissionDenied").style.display = "none";
+
+          // Scroll to history section on mobile
+          if (window.innerWidth < 768) {
+            document
+              .getElementById("purchaseHistory")
+              .scrollIntoView({ behavior: "smooth" });
+          }
+        } catch (error) {
+          console.error("Error fetching purchase history:", error);
+          alert("❌ Error loading purchase history.");
+        }
+      }
+
+      // ADMIN ONLY: View all sales history
+      async function viewSalesHistory() {
+        if (currentUser.role !== "admin") {
+          showPermissionDenied("All Sales History");
+          return;
+        }
+
+        try {
+          const res = await fetch(
+            "/api/admin/sales-history", // CHANGED THIS LINE
+            {
+              headers: {
+                Authorization: `Bearer ${authToken}`,
+              },
+            }
+          );
+
+          if (res.status === 403) {
+            showPermissionDenied("All Sales History");
+            return;
+          }
+
+          const data = await res.json();
+
+          const tableBody = document.getElementById("salesHistoryBody");
+          tableBody.innerHTML = "";
+
+          if (data.length === 0) {
+            tableBody.innerHTML =
+              '<tr><td colspan="9">No sales records found</td></tr>';
+          } else {
+            data.forEach((sale) => {
+              const date = new Date(sale.created_at).toLocaleDateString(
+                "en-IN"
+              );
+              const time = new Date(sale.created_at).toLocaleTimeString(
+                "en-IN"
+              );
+              const details = sale.details;
+
+              const row = `
+              <tr>
+                <td><strong>${sale.sales_id}</strong></td>
+                <td>${date}</td>
+                <td>${time}</td>
+                <td>${sale.customer_name}</td>
+                <td>${parseFloat(details.weight_kg).toFixed(2)} kg</td>
+                <td>${sale.tea_type}</td>
+                <td>₹ ${parseFloat(sale.total_amount).toFixed(2)}</td>
+                <td>₹ ${parseFloat(details.price_per_kg).toFixed(2)}</td>
+                <td>${
+                  sale.created_by_username ||
+                  sale.created_by ||
+                  currentUser.username
+                }</td>
+              </tr>
+            `;
+              tableBody.innerHTML += row;
+            });
+          }
+
+          document.getElementById("salesHistory").style.display = "block";
+          document.getElementById("adminSalesHistory").style.display = "block";
+          document.getElementById("userSalesHistory").style.display = "none";
+          document.getElementById("purchaseHistory").style.display = "none";
+          document.getElementById("adminPurchaseHistory").style.display =
+            "none";
+          document.getElementById("userPurchaseHistory").style.display = "none";
+          document.getElementById("permissionDenied").style.display = "none";
+
+          // Scroll to history section on mobile
+          if (window.innerWidth < 768) {
+            document
+              .getElementById("salesHistory")
+              .scrollIntoView({ behavior: "smooth" });
+          }
+        } catch (error) {
+          console.error("Error fetching sales history:", error);
+          alert("❌ Error loading sales history.");
+        }
+      }
+
+      // Regular User: View their own purchase history
+      async function viewUserPurchaseHistory() {
+        try {
+          const res = await fetch("/api/user/purchase-history", {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          });
+
+          const data = await res.json();
+
+          const tableBody = document.getElementById("purchaseHistoryBody");
+          tableBody.innerHTML = "";
+
+          if (data.length === 0) {
+            tableBody.innerHTML =
+              '<tr><td colspan="9">No purchase records found</td></tr>';
+          } else {
+            data.forEach((purchase) => {
+              const date = new Date(purchase.created_at).toLocaleDateString(
+                "en-IN"
+              );
+              const time = new Date(purchase.created_at).toLocaleTimeString(
+                "en-IN"
+              );
+
+              const row = `
+              <tr>
+                <td><strong>${purchase.purchase_id}</strong></td>
+                <td>${date}</td>
+                <td>${time}</td>
+                <td>${purchase.garden_name}</td>
+                <td>${purchase.num_bags}</td>
+                <td>${parseFloat(purchase.weight_kg).toFixed(2)} kg</td>
+                <td>₹ ${parseFloat(purchase.total_price).toFixed(2)}</td>
+                <td>₹ ${parseFloat(purchase.price_per_kg).toFixed(2)}</td>
+                <td>${currentUser.username}</td>
+              </tr>
+            `;
+              tableBody.innerHTML += row;
+            });
+          }
+
+          document.getElementById("purchaseHistory").style.display = "block";
+          document.getElementById("userPurchaseHistory").style.display =
+            "block";
+          document.getElementById("adminPurchaseHistory").style.display =
+            "none";
+          document.getElementById("salesHistory").style.display = "none";
+          document.getElementById("adminSalesHistory").style.display = "none";
+          document.getElementById("userSalesHistory").style.display = "none";
+          document.getElementById("permissionDenied").style.display = "none";
+
+          // Scroll to history section on mobile
+          if (window.innerWidth < 768) {
+            document
+              .getElementById("purchaseHistory")
+              .scrollIntoView({ behavior: "smooth" });
+          }
+        } catch (error) {
+          console.error("Error fetching purchase history:", error);
+          alert("❌ Error loading purchase history.");
+        }
+      }
+
+      // Regular User: View their own sales history
+      async function viewUserSalesHistory() {
+        try {
+          const res = await fetch("/api/user/sales-history", {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          });
+
+          const data = await res.json();
+
+          const tableBody = document.getElementById("salesHistoryBody");
+          tableBody.innerHTML = "";
+
+          if (data.length === 0) {
+            tableBody.innerHTML =
+              '<tr><td colspan="9">No sales records found</td></tr>';
+          } else {
+            data.forEach((sale) => {
+              const date = new Date(sale.created_at).toLocaleDateString(
+                "en-IN"
+              );
+              const time = new Date(sale.created_at).toLocaleTimeString(
+                "en-IN"
+              );
+              const details = sale.details;
+
+              const row = `
+              <tr>
+                <td><strong>${sale.sales_id}</strong></td>
+                <td>${date}</td>
+                <td>${time}</td>
+                <td>${sale.customer_name}</td>
+                <td>${parseFloat(details.weight_kg).toFixed(2)} kg</td>
+                <td>${sale.tea_type}</td>
+                <td>₹ ${parseFloat(sale.total_amount).toFixed(2)}</td>
+                <td>₹ ${parseFloat(details.price_per_kg).toFixed(2)}</td>
+                <td>${currentUser.username}</td>
+              </tr>
+            `;
+              tableBody.innerHTML += row;
+            });
+          }
+
+          document.getElementById("salesHistory").style.display = "block";
+          document.getElementById("userSalesHistory").style.display = "block";
+          document.getElementById("adminSalesHistory").style.display = "none";
+          document.getElementById("purchaseHistory").style.display = "none";
+          document.getElementById("adminPurchaseHistory").style.display =
+            "none";
+          document.getElementById("userPurchaseHistory").style.display = "none";
+          document.getElementById("permissionDenied").style.display = "none";
+
+          // Scroll to history section on mobile
+          if (window.innerWidth < 768) {
+            document
+              .getElementById("salesHistory")
+              .scrollIntoView({ behavior: "smooth" });
+          }
+        } catch (error) {
+          console.error("Error fetching sales history:", error);
+          alert("❌ Error loading sales history.");
+        }
+      }
+
+      // ADMIN ONLY: Download purchase Excel
+      function downloadPurchaseExcel() {
+        if (currentUser.role !== "admin") {
+          showPermissionDenied("Purchase Excel Download");
+          return;
+        }
+
+        // Create a hidden iframe to download the file
+        const url = "/api/download/purchase-excel"; // This is correct
+        const token = localStorage.getItem("authToken");
+
+        const iframe = document.createElement("iframe");
+        iframe.style.display = "none";
+        iframe.src = url;
+        iframe.onload = function () {
+          fetch(url, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+            .then((response) => {
+              if (response.ok) {
+                return response.blob();
+              }
+              throw new Error("Download failed");
+            })
+            .then((blob) => {
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `purchase_history_${
+                new Date().toISOString().split("T")[0]
+              }.xlsx`;
+              document.body.appendChild(a);
+              a.click();
+              window.URL.revokeObjectURL(url);
+              document.body.removeChild(a);
+            })
+            .catch((error) => {
+              console.error("Download error:", error);
+              alert("❌ Error downloading purchase history.");
+            });
+
+          document.body.removeChild(iframe);
+        };
+        document.body.appendChild(iframe);
+      }
+
+      // ADMIN ONLY: Download sales Excel
+      function downloadSalesExcel() {
+        if (currentUser.role !== "admin") {
+          showPermissionDenied("Sales Excel Download");
+          return;
+        }
+
+        const url = "/api/download/sales-excel"; // This is correct
+        const token = localStorage.getItem("authToken");
+
+        const iframe = document.createElement("iframe");
+        iframe.style.display = "none";
+        iframe.src = url;
+        iframe.onload = function () {
+          fetch(url, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+            .then((response) => {
+              if (response.ok) {
+                return response.blob();
+              }
+              throw new Error("Download failed");
+            })
+            .then((blob) => {
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = `sales_history_${
+                new Date().toISOString().split("T")[0]
+              }.xlsx`;
+              document.body.appendChild(a);
+              a.click();
+              window.URL.revokeObjectURL(url);
+              document.body.removeChild(a);
+            })
+            .catch((error) => {
+              console.error("Download error:", error);
+              alert("❌ Error downloading sales history.");
+            });
+
+          document.body.removeChild(iframe);
+        };
+        document.body.appendChild(iframe);
+      }
+
+      // Handle orientation changes
+      window.addEventListener("orientationchange", function () {
+        setTimeout(function () {
+          toggleTransactionType();
+        }, 100);
+      });
+
+      // Initialize on page load
+      window.addEventListener("load", function () {
+        document.getElementById("authOverlay").style.display = "flex";
+        checkAuth();
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tea Selling Portal</title>
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+        background-color: #f5f7fa;
+        margin: 0;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 800px;
+        background: white;
+        padding: 25px;
+        margin: auto;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 30px;
+      }
+
+      .section {
+        margin-bottom: 25px;
+        padding: 20px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        background: #fafafa;
+      }
+
+      .section-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #0078d7;
+        margin-bottom: 15px;
+        border-bottom: 2px solid #0078d7;
+        padding-bottom: 5px;
+      }
+
+      label {
+        display: block;
+        margin-top: 15px;
+        font-weight: 600;
+        color: #444;
+      }
+
+      input,
+      select,
+      button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 8px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 1rem;
+        box-sizing: border-box;
+      }
+
+      .radio-group {
+        display: flex;
+        gap: 20px;
+        margin-top: 10px;
+      }
+
+      .radio-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background: white;
+        cursor: pointer;
+      }
+
+      .radio-option:hover {
+        background: #f0f8ff;
+      }
+
+      .radio-option input {
+        width: auto;
+      }
+
+      button {
+        background-color: #28a745;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 20px;
+        transition: background-color 0.3s;
+        border: none;
+      }
+
+      button:hover {
+        background-color: #218838;
+      }
+
+      .form-row {
+        display: flex;
+        gap: 15px;
+        margin-top: 15px;
+      }
+
+      .form-group {
+        flex: 1;
+      }
+
+      #bagSection,
+      #retailSection {
+        display: none;
+      }
+
+      .bill-section {
+        margin-top: 30px;
+        padding: 20px;
+        background: #e8f5e8;
+        border-radius: 8px;
+        border: 1px solid #28a745;
+      }
+
+      .bill-item {
+        display: flex;
+        justify-content: space-between;
+        margin: 8px 0;
+        padding: 8px;
+        background: white;
+        border-radius: 4px;
+      }
+
+      .bill-label {
+        font-weight: 600;
+        color: #333;
+      }
+
+      .bill-value {
+        font-weight: 600;
+        color: #0078d7;
+      }
+
+      .total-amount {
+        font-size: 1.3rem;
+        color: #28a745;
+        font-weight: bold;
+        text-align: center;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 2px solid #28a745;
+      }
+
+      .history-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      .history-table th,
+      .history-table td {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: center;
+      }
+
+      .history-table th {
+        background-color: #0078d7;
+        color: white;
+      }
+
+      .nav-buttons {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .nav-buttons button {
+        flex: 1;
+      }
+
+      .btn-secondary {
+        background-color: #6c757d;
+      }
+
+      .btn-secondary:hover {
+        background-color: #545b62;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🍃 Tea Selling Portal</h1>
+
+      <div class="section">
+        <div class="section-title">Customer Information</div>
+
+        <label for="customerName">Customer Name *</label>
+        <input
+          type="text"
+          id="customerName"
+          placeholder="Enter customer name"
+          required
+        />
+      </div>
+
+      <div class="section">
+        <div class="section-title">Sale Type *</div>
+
+        <div class="radio-group">
+          <div class="radio-option">
+            <input
+              type="radio"
+              id="saleBag"
+              name="saleType"
+              value="bag"
+              onchange="toggleSaleType()"
+            />
+            <label for="saleBag" style="display: inline; margin-top: 0"
+              >Bulk Bag Sale</label
+            >
+          </div>
+          <div class="radio-option">
+            <input
+              type="radio"
+              id="saleRetail"
+              name="saleType"
+              value="retail"
+              onchange="toggleSaleType()"
+            />
+            <label for="saleRetail" style="display: inline; margin-top: 0"
+              >Retail Sale</label
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Bag Sale Section -->
+      <div id="bagSection" class="section">
+        <div class="section-title">Bulk Bag Sale Details</div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="numBags">Number of Bags *</label>
+            <input type="number" id="numBags" placeholder="e.g., 5" min="1" />
+          </div>
+          <div class="form-group">
+            <label for="bagWeight">Weight per Bag (kg) *</label>
+            <input
+              type="number"
+              id="bagWeight"
+              placeholder="e.g., 30"
+              min="1"
+              step="0.5"
+              value="30"
+            />
+          </div>
+        </div>
+
+        <label for="bagSellingPrice">Selling Price per Bag (₹) *</label>
+        <input
+          type="number"
+          id="bagSellingPrice"
+          placeholder="e.g., 6000"
+          step="0.01"
+          min="0"
+        />
+      </div>
+
+      <!-- Retail Sale Section -->
+      <div id="retailSection" class="section">
+        <div class="section-title">Retail Sale Details</div>
+
+        <label for="retailWeight">Select Weight *</label>
+        <select id="retailWeight" required>
+          <option value="0.250">250g</option>
+          <option value="0.500">500g</option>
+          <option value="1">1 kg</option>
+          <option value="2">2 kg</option>
+          <option value="5">5 kg</option>
+          <option value="10">10 kg</option>
+        </select>
+
+        <label for="retailSellingPrice">Selling Price per Packet (₹) *</label>
+        <input
+          type="number"
+          id="retailSellingPrice"
+          placeholder="e.g., 50"
+          step="0.01"
+          min="0"
+        />
+      </div>
+
+      <button onclick="generateBill()">💰 Generate Bill</button>
+
+      <!-- Bill Section -->
+      <div id="billSection" class="bill-section" style="display: none">
+        <h3 style="text-align: center; color: #28a745">📄 Customer Bill</h3>
+        <div id="billDetails"></div>
+      </div>
+
+      <button
+        id="saveBillBtn"
+        style="display: none; background-color: #ffc107; color: black"
+        onclick="saveBill()"
+      >
+        💾 Save Bill
+      </button>
+
+      <div class="nav-buttons">
+        <button class="btn-secondary" onclick="viewSalesHistory()">
+          📜 View Sales History
+        </button>
+        <button class="btn-secondary" onclick="goToPackaging()">
+          📦 Go to Packaging Calculator
+        </button>
+      </div>
+
+      <!-- Sales History Section -->
+      <div id="salesHistory" style="display: none; margin-top: 30px">
+        <h3>📊 Sales History</h3>
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Customer</th>
+              <th>Type</th>
+              <th>Weight</th>
+              <th>Price/Packet</th>
+              <th>Total (₹)</th>
+            </tr>
+          </thead>
+          <tbody id="salesHistoryBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      function toggleSaleType() {
+        const bagSection = document.getElementById("bagSection");
+        const retailSection = document.getElementById("retailSection");
+        const saleType = document.querySelector(
+          'input[name="saleType"]:checked'
+        ).value;
+
+        if (saleType === "bag") {
+          bagSection.style.display = "block";
+          retailSection.style.display = "none";
+
+          // Set default values for bag section
+          document.getElementById("bagWeight").value = "30";
+        } else {
+          bagSection.style.display = "none";
+          retailSection.style.display = "block";
+        }
+
+        // Hide bill section when changing sale type
+        document.getElementById("billSection").style.display = "none";
+        document.getElementById("saveBillBtn").style.display = "none";
+      }
+
+      function generateBill() {
+        const customerName = document.getElementById("customerName").value;
+        const saleType = document.querySelector(
+          'input[name="saleType"]:checked'
+        );
+
+        if (!customerName) {
+          alert("Please enter customer name");
+          return;
+        }
+        if (!saleType) {
+          alert("Please select sale type");
+          return;
+        }
+
+        let billHTML = "";
+        let totalAmount = 0;
+
+        if (saleType.value === "bag") {
+          const numBags = document.getElementById("numBags").value;
+          const bagWeight = document.getElementById("bagWeight").value;
+          const sellingPrice = document.getElementById("bagSellingPrice").value;
+
+          if (!numBags || !bagWeight || !sellingPrice) {
+            alert("Please fill all bag sale details");
+            return;
+          }
+
+          totalAmount = numBags * sellingPrice;
+          const totalWeight = numBags * bagWeight;
+
+          billHTML = `
+          <div class="bill-item">
+            <span class="bill-label">Customer:</span>
+            <span class="bill-value">${customerName}</span>
+          </div>
+          <div class="bill-item">
+            <span class="bill-label">Sale Type:</span>
+            <span class="bill-value">Bulk Bag Sale</span>
+          </div>
+          <div class="bill-item">
+            <span class="bill-label">Bags:</span>
+            <span class="bill-value">${numBags} bags × ${bagWeight}kg</span>
+          </div>
+          <div class="bill-item">
+            <span class="bill-label">Total Weight:</span>
+            <span class="bill-value">${totalWeight} kg</span>
+          </div>
+          <div class="bill-item">
+            <span class="bill-label">Price per Bag:</span>
+            <span class="bill-value">₹ ${parseFloat(sellingPrice).toFixed(
+              2
+            )}</span>
+          </div>
+        `;
+        } else {
+          const retailWeight = document.getElementById("retailWeight").value;
+          const sellingPrice =
+            document.getElementById("retailSellingPrice").value;
+
+          if (!retailWeight || !sellingPrice) {
+            alert("Please fill all retail sale details");
+            return;
+          }
+
+          totalAmount = parseFloat(sellingPrice); // Single packet price
+          const weightText = getWeightText(retailWeight);
+
+          billHTML = `
+          <div class="bill-item">
+            <span class="bill-label">Customer:</span>
+            <span class="bill-value">${customerName}</span>
+          </div>
+          <div class="bill-item">
+            <span class="bill-label">Sale Type:</span>
+            <span class="bill-value">Retail Sale</span>
+          </div>
+          <div class="bill-item">
+            <span class="bill-label">Package Weight:</span>
+            <span class="bill-value">${weightText}</span>
+          </div>
+          <div class="bill-item">
+            <span class="bill-label">Price per Packet:</span>
+            <span class="bill-value">₹ ${parseFloat(sellingPrice).toFixed(
+              2
+            )}</span>
+          </div>
+        `;
+        }
+
+        billHTML += `
+        <div class="total-amount">
+          Total Amount: ₹ ${parseFloat(totalAmount).toFixed(2)}
+        </div>
+      `;
+
+        document.getElementById("billDetails").innerHTML = billHTML;
+        document.getElementById("billSection").style.display = "block";
+        document.getElementById("saveBillBtn").style.display = "block";
+      }
+
+      function getWeightText(weightValue) {
+        const weightMap = {
+          "0.250": "250g",
+          "0.500": "500g",
+          1: "1 kg",
+          2: "2 kg",
+          5: "5 kg",
+          10: "10 kg",
+        };
+        return weightMap[weightValue] || `${weightValue} kg`;
+      }
+
+      async function saveBill() {
+        const customerName = document.getElementById("customerName").value;
+        const saleType = document.querySelector(
+          'input[name="saleType"]:checked'
+        ).value;
+
+        let saleData = {
+          customer_name: customerName,
+          sale_type: saleType,
+          total_amount: 0,
+          details: {},
+        };
+
+        if (saleType === "bag") {
+          saleData.details = {
+            num_bags: document.getElementById("numBags").value,
+            bag_weight: document.getElementById("bagWeight").value,
+            price_per_bag: document.getElementById("bagSellingPrice").value,
+          };
+          saleData.total_amount =
+            saleData.details.num_bags * saleData.details.price_per_bag;
+        } else {
+          saleData.details = {
+            weight: document.getElementById("retailWeight").value,
+            price_per_unit: document.getElementById("retailSellingPrice").value,
+            quantity: 1, // Always 1 for retail since we're selling single packets
+          };
+          saleData.total_amount = saleData.details.price_per_unit;
+        }
+
+        try {
+          const res = await fetch("/api/save-sale", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(saleData),
+          });
+          const result = await res.json();
+          alert(result.message || "Bill saved successfully!");
+
+          // Reset form
+          resetForm();
+        } catch (error) {
+          console.error(error);
+          alert("Error saving bill data.");
+        }
+      }
+
+      function resetForm() {
+        document.getElementById("customerName").value = "";
+        document
+          .querySelectorAll('input[name="saleType"]')
+          .forEach((radio) => (radio.checked = false));
+        document.getElementById("numBags").value = "";
+        document.getElementById("bagWeight").value = "30";
+        document.getElementById("bagSellingPrice").value = "";
+        document.getElementById("retailWeight").value = "0.025";
+        document.getElementById("retailSellingPrice").value = "";
+        document.getElementById("billSection").style.display = "none";
+        document.getElementById("saveBillBtn").style.display = "none";
+        document.getElementById("bagSection").style.display = "none";
+        document.getElementById("retailSection").style.display = "none";
+      }
+
+      async function viewSalesHistory() {
+        try {
+          const res = await fetch("/api/sales-history");
+          const data = await res.json();
+
+          const tableBody = document.getElementById("salesHistoryBody");
+          tableBody.innerHTML = "";
+
+          if (data.length === 0) {
+            tableBody.innerHTML =
+              '<tr><td colspan="7">No sales records found</td></tr>';
+          } else {
+            data.forEach((sale) => {
+              const date = new Date(sale.created_at).toLocaleDateString(
+                "en-IN"
+              );
+              const time = new Date(sale.created_at).toLocaleTimeString(
+                "en-IN"
+              );
+
+              let weightInfo = "";
+              let pricePerUnit = "";
+
+              if (sale.sale_type === "bag") {
+                weightInfo = `${sale.details.bag_weight}kg`;
+                pricePerUnit = `₹ ${parseFloat(
+                  sale.details.price_per_bag
+                ).toFixed(2)}`;
+              } else {
+                weightInfo = getWeightText(sale.details.weight);
+                pricePerUnit = `₹ ${parseFloat(
+                  sale.details.price_per_unit
+                ).toFixed(2)}`;
+              }
+
+              const row = `
+              <tr>
+                <td>${date}</td>
+                <td>${time}</td>
+                <td>${sale.customer_name}</td>
+                <td>${sale.sale_type}</td>
+                <td>${weightInfo}</td>
+                <td>${pricePerUnit}</td>
+                <td>₹ ${parseFloat(sale.total_amount).toFixed(2)}</td>
+              </tr>
+            `;
+              tableBody.innerHTML += row;
+            });
+          }
+
+          document.getElementById("salesHistory").style.display = "block";
+        } catch (error) {
+          console.error("Error fetching sales history:", error);
+          alert("Error loading sales history.");
+        }
+      }
+
+      function goToPackaging() {
+        window.location.href = "index.html";
+      }
+    </script>
+  </body>
+</html>
