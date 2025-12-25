@@ -328,7 +328,7 @@
         loading.style.display = "block";
 
         // Make login request
-        fetch("/api/login", {
+        fetch("/.netlify/functions/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
